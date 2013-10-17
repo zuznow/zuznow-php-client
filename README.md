@@ -4,6 +4,7 @@ zuznow-php-client
 zuznow php client
 
 In order to activate Zuznow Client you have to:
+
 1. Install the files under MOB folder
 2. Configure the clinet by editing mob_config.php
 3. Activate the clinet by adding mob_filter.php to every php document usin auto_prepend_file command at php.ini
