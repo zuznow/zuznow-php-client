@@ -24,4 +24,5 @@ $cache_type - The type of API cache, can be one of:
 3. none
 
 $cache_ttl - Time to Live for the API cache in the ZMS in minutes
- 
+
+To test your client installation connect to the website as usual and add ?mobtest in the end of the url, e.g. http://www.zuznow.com?mobtest
