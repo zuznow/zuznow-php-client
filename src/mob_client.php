@@ -1,6 +1,6 @@
 <?php 
 require_once 'mob_config.php';
-
+$begin_time = microtime(true);
 require_once("HTTP/Request2.php");
 
 function MOB_Fetch_Cache($cache_key){
@@ -31,8 +31,6 @@ function MOB_Fetch_Anonynous_Cache(){
 	global $cache_type;
 	global $compatible;
 	
-	if (!$compatible) return;
-	
 	if ($cache_type == "anonymous" && $_SERVER['REQUEST_METHOD'] === 'GET')
 	{
 		$url = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
@@ -40,6 +38,7 @@ function MOB_Fetch_Anonynous_Cache(){
 		$str = MOB_Fetch_Cache(md5($url));
 		if ($str != "")
 		{
+			$str.= "\n<!--\nServed from Anonymous cache\nTotal time ".(microtime(true)-$begin_time)."\n -->";
 			print $str;
 			exit;
 		}
@@ -48,10 +47,13 @@ function MOB_Fetch_Anonynous_Cache(){
 
 function MOB_Filter($str) {
 	try	{	
+		global $begin_time;
 		global $api_key;
 		global $domain_id;
 		global $cache_type;
 		global $server_url;
+
+		$filter_begin_time = microtime(true);
 		
 		$compressed_data = gzencode($str);
 		
@@ -97,7 +99,10 @@ function MOB_Filter($str) {
 		}	
 		if (is_object($response) && 200 == $response->getStatus()) 
 		{	
-			return $response->getBody();
+			$str = $response->getBody();
+			$str.= "\n<!-- \nTotal time ".(microtime(true)-$begin_time)."\n -->";
+			$str.= "\n<!-- \nFilter time ".(microtime(true)-$filter_begin_time)."\n -->";
+			return $str;
 		}
 		else if (is_object($response) && 302 == $response->getStatus()) 
 		{	
@@ -117,8 +122,10 @@ function MOB_Filter($str) {
 				}	
 				if (is_object($response) && 200 == $response->getStatus()) 
 				{	
-					return $response->getBody();
-					exit;
+					$str = $response->getBody();
+					$str.= "\n<!-- \nTotal time ".(microtime(true)-$begin_time)."\n -->";
+					$str.= "\n<!-- \nFilter time ".(microtime(true)-$filter_begin_time)."\n -->";
+					return $str;
 				}
 				else if ((is_object($response) && 404 != $response->getStatus())) 
 				{
