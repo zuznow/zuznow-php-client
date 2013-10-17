@@ -10,6 +10,7 @@ In order to activate Zuznow Client you have to:
 3. Activate the clinet by adding mob_filter.php to every php document usin auto_prepend_file command at php.ini
 
 Configuring Zuznow Client:
+
 $server_url - The URL of Zuznow Mobilization Server (ZMS)
 $domain_id - The ID of the required domain
 $api_key - The API Key of the required domain
