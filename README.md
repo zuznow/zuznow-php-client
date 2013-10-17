@@ -12,11 +12,16 @@ In order to activate Zuznow Client you have to:
 Configuring Zuznow Client:
 
 $server_url - The URL of Zuznow Mobilization Server (ZMS)
+
 $domain_id - The ID of the required domain
+
 $api_key - The API Key of the required domain
+
 $cache_type - The type of API cache, can be one of:
+
 1. anonymous
 2. personalized
 3. none
+
 $cache_ttl - Time to Live for the API cache in the ZMS in minutes
  
