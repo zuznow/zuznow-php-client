@@ -1,8 +1,9 @@
 <?php
 
-$api_key = "";
-$domain_id = "";
+$api_key = "6a080c60-b066-11e0-9f1c-0800200c9a66";
+$domain_id = "5";
 $cache_type = "anonymous";
 $server_url = "http://proxy5.zuznow.com/API/";
+$cache_ttl = "30";
 
 ?>
