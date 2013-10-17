@@ -1,9 +1,15 @@
 <?php
 
-$api_key = "6a080c60-b066-11e0-9f1c-0800200c9a66";
-$domain_id = "5";
+$server_url = "";
+$api_key = "";
+$domain_id = "";
+/*
+cache type can be:
+1. annymous
+2. personelized
+3. none
+*/
 $cache_type = "anonymous";
-$server_url = "http://proxy5.zuznow.com/API/";
 $cache_ttl = "30";
 
 ?>
