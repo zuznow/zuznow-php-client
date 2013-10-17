@@ -1,5 +1,5 @@
 <?php 
-require_once 'config.php';
+require_once 'mob_config.php';
 
 require_once("HTTP/Request2.php");
 
@@ -103,7 +103,7 @@ function MOB_Filter($str) {
 		{	
 			$data_url_base = $response->getHeader("Location");
 			$count = 1;
-			while($count < = 10)
+			while($count <= 10)
 			{
 					$data_url = $data_url_base."&key=".$api_key."&domain_id=".$domain_id."&cache_ttl=".$cache_ttl."&user_agent=".rawurlencode(MOB_Get_UA());
 				$request = new HTTP_Request2($data_url, HTTP_Request2::METHOD_GET);
