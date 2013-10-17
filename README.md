@@ -17,3 +17,4 @@ $cache_type - The type of API cache, can be one of:
 2. personalized
 3. none
 $cache_ttl - Time to Live for the API cache in the ZMS in minutes
+ 
