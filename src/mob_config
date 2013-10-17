@@ -1,0 +1,8 @@
+<?php
+
+$api_key = "";
+$domain_id = "";
+$cache_type = "anonymous";
+$server_url = "http://proxy5.zuznow.com/API/";
+
+?>
