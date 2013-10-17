@@ -1,14 +1,12 @@
 <?php 
-//ob_start("ob_gzhandler");
+require_once 'client.php';
 
-require_once 'HTTP/Request2.php';
-
-$begin_time = microtime(true);
-
-$key = "mykey";
-$domain_id = "5";
-$version = "1.00.30";
-$cache_ttl = "15";
+if (!$compatible)
+{
+	header('HTTP/1.1 404 Not Found');
+	print "Missing prerequisite";
+	exit;
+}
 
 if (!isset($_GET["cache_data_location"]))
 {
@@ -17,13 +15,18 @@ if (!isset($_GET["cache_data_location"]))
 	exit;
 }
 $cache_data_location = $_GET["cache_data_location"];
+
 $charset = "UTF-8";
 if (isset($_GET["charset"]))
 {
 	$charset =$_GET["charset"];
 }
 
-$server_url = "http://".$cache_data_location;
+$server_url = "http://".$cache_data_location."&key=".$key."&domain_id=".$domain_id."&user_agent=".rawurlencode(MOB_Get_UA());
+if (!$server_config)
+{
+	$server_url .= "&cache_ttl=".$cache_ttl;
+}
 
 header('Content-type: text/plain; charset='.$charset);
 
