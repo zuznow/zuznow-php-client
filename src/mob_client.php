@@ -96,6 +96,7 @@ function MOB_Filter($str) {
 		}
 		catch (HTTP_Request2_ConnectionException $e)
 		{
+			$str.= "\n<!-- \n".$e->getMessage()."\n -->";
 		}	
 		if (is_object($response) && 200 == $response->getStatus()) 
 		{	
@@ -134,7 +135,11 @@ function MOB_Filter($str) {
 				sleep(1);
 			}
 		}
-		$str.= "\n<!-- \n".$response->getStatus()."\n".$response->getBody()."\n -->";
+		if(is_object($response) )
+		{
+			$str.= "\n<!-- \n".$response->getStatus()."\n".$response->getBody()."\n -->";
+		}
+		
 	}
 	catch (Exception $e)
 	{
