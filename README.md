@@ -1,6 +1,17 @@
 zuznow-php-client
 =================
 
+prerequisites
+
+
+install pear 
+http://pear.php.net/manual/en/installation.php
+
+install pear package HTTP Request2
+- pear install HTTP_Request2
+
+
+
 zuznow php client
 
 In order to activate Zuznow Client you have to:
