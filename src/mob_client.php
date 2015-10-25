@@ -45,6 +45,27 @@ function MOB_Fetch_Anonynous_Cache(){
 	}
 }
 
+function MOB_gzdecode($data){ 
+   return gzinflate(substr($data,10,-8)); 
+}
+
+function MOB_Check_Header_Value($header) {
+    $headers = headers_list();
+    $header = trim($header,': ');
+    $value = "";
+
+    foreach ($headers as $hdr) {
+		//check if header exists and get his value
+        if (strpos($hdr, $header) !== false){
+			$result = explode(':', $hdr);
+			$value = trim($result[1]);
+        }
+    }
+	
+    return $value;
+}
+
+
 function MOB_Filter($str) {
 	try	{	
 		global $begin_time;
@@ -52,6 +73,14 @@ function MOB_Filter($str) {
 		global $domain_id;
 		global $cache_type;
 		global $server_url;
+		
+		//if Content-Encoding header contains gzip
+		if (strpos(MOB_Check_Header_Value("Content-Encoding"),"gzip") !== false){
+			$gzHandler = true;
+		}
+		if ($gzHandler){
+			$str = MOB_gzdecode($str);
+		}
 
 		$filter_begin_time = microtime(true);
 		
@@ -103,6 +132,9 @@ function MOB_Filter($str) {
 			$str = $response->getBody();
 			$str.= "\n<!-- \nTotal time ".(microtime(true)-$begin_time)."\n -->";
 			$str.= "\n<!-- \nFilter time ".(microtime(true)-$filter_begin_time)."\n -->";
+			if ($gzHandler){
+				$str = gzencode($str);
+			}
 			return $str;
 		}
 		else if (is_object($response) && 302 == $response->getStatus()) 
@@ -126,6 +158,9 @@ function MOB_Filter($str) {
 					$str = $response->getBody();
 					$str.= "\n<!-- \nTotal time ".(microtime(true)-$begin_time)."\n -->";
 					$str.= "\n<!-- \nFilter time ".(microtime(true)-$filter_begin_time)."\n -->";
+					if ($gzHandler){
+						$str = gzencode($str);
+					}
 					return $str;
 				}
 				else if ((is_object($response) && 404 != $response->getStatus())) 
@@ -139,8 +174,10 @@ function MOB_Filter($str) {
 		{
 			$str.= "\n<!-- \n".$response->getStatus()."\n".$response->getBody()."\n -->";
 		}
-		
-	}
+		if ($gzHandler){
+			$str = gzencode($str);
+		}
+	}	
 	catch (Exception $e)
 	{
 		$str.= "\n<!-- \n".$e->getMessage()."\n -->";
@@ -214,9 +251,10 @@ function MOB_Is_Supported()
 
 function MOB_Filter_Enable()
 {	
+	global $mob_enabled;
 	$url = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
 	$url .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-	if (!preg_match("/MOB/",$url))
+	if ((!preg_match("/MOB/",$url)) && ($mob_enabled || MOB_Is_Test()))
 	{
 		ob_start("MOB_Filter");
 	}
