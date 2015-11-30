@@ -4,13 +4,14 @@ $begin_time = microtime(true);
 require_once("HTTP/Request2.php");
 
 function MOB_Fetch_Cache($cache_key){
-	global $key;
+	global $api_key;
 	global $domain_id;
 	global $server_url;
 	global $cache_ttl;
 	
-	$my_url = $server_url."get_cached_data.php?key=".$key."&domain_id=".$domain_id."&cache_key=".$cache_key."&cache_ttl=".$cache_ttl."&user_agent=".rawurlencode(MOB_Get_UA());
+	$my_url = $server_url."get_cached_data.php?key=".$api_key."&domain_id=".$domain_id."&cache_key=".$cache_key."&cache_ttl=".$cache_ttl."&user_agent=".rawurlencode(MOB_Get_UA());
 	$request = new HTTP_Request2($my_url, HTTP_Request2::METHOD_GET);
+	$request->setHeader(array(  'Connection' => 'close'));
 	try
 	{
 		$response = $request->send();
@@ -34,7 +35,7 @@ function MOB_Fetch_Anonynous_Cache(){
 	if ($cache_type == "anonymous" && $_SERVER['REQUEST_METHOD'] === 'GET')
 	{
 		$url = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
-		$url .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+		$url .= $_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
 		$str = MOB_Fetch_Cache(md5($url));
 		if ($str != "")
 		{
@@ -71,6 +72,7 @@ function MOB_Filter($str) {
 		global $begin_time;
 		global $api_key;
 		global $domain_id;
+		global $charset;
 		global $cache_type;
 		global $server_url;
 		
@@ -92,6 +94,10 @@ function MOB_Filter($str) {
 		$request = new HTTP_Request2($server_url."mobilize.php", HTTP_Request2::METHOD_POST);
 		$request->addPostParameter('key', $api_key);
 		$request->addPostParameter('domain_id', $domain_id);
+		if($charset && $charset != "" )
+		{
+			$request->addPostParameter('charset', $charset);
+		}
 		$request->addPostParameter('url', $url);
 		if (MOB_Is_Test())
 		{
@@ -140,11 +146,16 @@ function MOB_Filter($str) {
 		else if (is_object($response) && 302 == $response->getStatus()) 
 		{	
 			$data_url_base = $response->getHeader("Location");
+			$lbzuz = $response->getHeader("X-LBZUZ");
 			$count = 1;
 			while($count <= 10)
 			{
 				$data_url = $data_url_base."&key=".$api_key."&domain_id=".$domain_id."&cache_ttl=".$cache_ttl."&user_agent=".rawurlencode(MOB_Get_UA());
 				$request = new HTTP_Request2($data_url, HTTP_Request2::METHOD_GET);
+				if($lbzuz)
+				{
+					$request->setHeader("X-LBZUZ", $lbzuz);
+				}
 				try
 				{
 					$response = $request->send();
