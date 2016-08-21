@@ -4,6 +4,7 @@ $mob_enabled = true;
 $server_url = "";
 $api_key = "";
 $domain_id = "";
+$charset = "";
 /*
 cache type can be:
 1. anonymous
